@@ -1,0 +1,49 @@
+name: Compilar LifeQuest
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar projeto
+        uses: actions/checkout@v4
+
+      - name: Preparar projeto
+        run: |
+          mkdir build-project
+          unzip -q LifeQuest_GitHub_CORRIGIDO.zip -d build-project
+          echo "Conteúdo:"
+          find build-project -maxdepth 3 -type f | head -100
+
+      - name: Encontrar projeto Android
+        run: |
+          PROJECT_DIR=$(find build-project -name settings.gradle -o -name settings.gradle.kts | head -1 | xargs dirname)
+          echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Configurar Android
+        uses: android-actions/setup-android@v3
+
+      - name: Configurar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Gerar AAB
+        run: |
+          cd "$PROJECT_DIR"
+          gradle bundleRelease
+
+      - name: Guardar AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: LifeQuest-AAB
+          path: ${{ env.PROJECT_DIR }}/app/build/outputs/bundle/release/*.aab
