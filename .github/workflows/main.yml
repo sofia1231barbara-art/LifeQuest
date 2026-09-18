@@ -9,13 +9,12 @@ jobs:
 
     steps:
       - name: Baixar projeto
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Preparar projeto
         run: |
           mkdir build-project
           unzip -q LifeQuest_GitHub_CORRIGIDO.zip -d build-project
-          echo "Conteúdo:"
           find build-project -maxdepth 3 -type f | head -100
 
       - name: Encontrar projeto Android
@@ -24,16 +23,16 @@ jobs:
           echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
 
       - name: Configurar Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '17'
 
       - name: Configurar Android
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
 
       - name: Configurar Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
         with:
           gradle-version: '8.9'
 
